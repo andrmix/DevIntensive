@@ -7,6 +7,10 @@ import com.softdesign.devintensive.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * <p>Выводит на экран главную Activity</p>
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
