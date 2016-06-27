@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">DevIntensive</string>
+    <string name="app_name">Михеев Андрей</string>
+    <string name="hint_mobile">Мобильный</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_profile">Профиль в VK</string>
+    <string name="hint_repo">Репозиторий</string>
+    <string name="hint_about">О себе</string>
+    <string name="rating">Рейтинг</string>
+    <string name="strings_of_code">Написано строк кода</string>
+    <string name="count_projects">Проектов</string>
+
+    <!-- test values -->
+    <string name="count_dig">5</string>
+    <string name="mobile_number">89503300555</string>
+    <string name="email">andrmix@inbox.ru</string>
+    <string name="vk_profile">vk.com/andrmix</string>
+    <string name="gh_repo">github.com/andrmix/DevIntensive</string>
+    <string name="about_myself">Очень рад, что подписался на данный интенсив! Спасибо большое! =))</string>
 </resources>
