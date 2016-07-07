@@ -9,6 +9,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 public class ImageHelper {
+    /**
+     * Скругление аватара
+     * @param bitmap битмапа аватара
+     * @return
+     */
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 

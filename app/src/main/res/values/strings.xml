@@ -16,4 +16,25 @@
     <string name="vk_profile">vk.com/andrmix</string>
     <string name="gh_repo">github.com/andrmix/DevIntensive</string>
     <string name="about_myself">Очень рад, что подписался на данный интенсив! Спасибо большое! =))</string>
+    <string name="user_profile.placeholder.image">Изменить фотографию профиля</string>
+    <string name="user_profile.dialog.gallery">Загрузить из галереи</string>
+    <string name="user_profile.dialog.camera">Сделать снимок</string>
+    <string name="user_profile.dialog.cancel">Отмена</string>
+    <string name="user_profile.dialog.title">Изменить фотографию профиля</string>
+    <string name="user_profile.choose.message">Выберите фото</string>
+    <string name="hint_password">Пароль</string>
+    <string name="text_login">ВОЙТИ</string>
+    <string name="remind_pass">Забыли пароль?</string>
+    <string name="msg_permissions">Для корректной работы приложения необходимо дать требуемые разрешения</string>
+    <string name="txt_allow">Разрешить</string>
+    <string name="error_phone_length">Номер телефона должен быть длиной от 11 до 20 цифр</string>
+    <string name="error_mail_format">Неверный адрес электронной почты</string>
+    <string name="error_vk_format">Неверная ссылка на профиль VK</string>
+    <string name="error_git_format">Неверная ссылка на профиль Github</string>
+    <string name="txt_package">package:</string>
+    <string name="txt_tel">tel:</string>
+    <string name="txt_mailto">mailto:</string>
+    <string name="txt_https">https://</string>
+    <string name="vk_address">vk.com</string>
+    <string name="git_address">github.com</string>
 </resources>
