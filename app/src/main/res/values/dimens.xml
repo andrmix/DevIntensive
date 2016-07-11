@@ -13,12 +13,15 @@
     <dimen name="size_largest_104">104dp</dimen>
     <dimen name="line_size">1dp</dimen>
     <dimen name="avatar_size">60dp</dimen>
+    <dimen name="profile_image_size">256dp</dimen>
+    <dimen name="placeholder_photo_size_90">90dp</dimen>
 
     <!-- Spaces -->
     <dimen name="spacing_small_8">8dp</dimen>
     <dimen name="spacing_normal_16">16dp</dimen>
     <dimen name="spacing_medial_24">24dp</dimen>
     <dimen name="spacing_medium_32">32dp</dimen>
+    <dimen name="spacing_larg_48">48dp</dimen>
     <dimen name="spacing_large_56">56dp</dimen>
     <dimen name="spacing_larger_72">72dp</dimen>
     <dimen name="spacing_largest_80">80dp</dimen>
@@ -27,6 +30,7 @@
     <!-- Fonts -->
     <dimen name="font_size_small_12">12sp</dimen>
     <dimen name="font_size_medial_14">14sp</dimen>
-    <dimen name="font_size_medium_20">20sp</dimen>
-    <dimen name="profile_image_size">256dp</dimen>
+    <dimen name="font_size_medium_16">16sp</dimen>
+    <dimen name="font_size_large_20">20sp</dimen>
+
 </resources>

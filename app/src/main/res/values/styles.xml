@@ -83,7 +83,7 @@
 
     <style name="topText.dig" parent="topText">
         <item name="android:text">@string/count_dig</item>
-        <item name="android:textSize">@dimen/font_size_medium_20</item>
+        <item name="android:textSize">@dimen/font_size_large_20</item>
     </style>
 
     <style name="topText.text" parent="topText">
@@ -107,7 +107,6 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/profile_image_size</item>
         <item name="android:scaleType">centerCrop</item>
-        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="toolbar">
@@ -142,6 +141,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/color_white</item>
         <item name="android:textSize">@dimen/font_size_medial_14</item>
+    </style>
+
+    <style name="fab_login">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/fab_right_space</item>
+        <item name="android:src">@drawable/ic_add_black_24dp</item>
     </style>
 
 </resources>
