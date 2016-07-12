@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
+    android:id="@+id/main_coordinator_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,13 +9,19 @@
     android:fitsSystemWindows="true"
     tools:context="com.softdesign.devintensive.ui.activities.LoginActivity">
 
-    <RelativeLayout
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/login_bg"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/spacing_large_56"
-        android:paddingRight="@dimen/spacing_large_56">
+        android:scaleType="centerCrop"/>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:cardBackgroundColor="@color/color_white"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="8dp">
 
         <RelativeLayout
             android:id="@+id/layout_login"
@@ -59,11 +66,12 @@
                 android:layout_marginTop="@dimen/spacing_normal_16">
 
                 <EditText
+                    android:id="@+id/login_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
                     android:hint="@string/hint_email"
-                    android:text="@string/email"
+                    android:text="andrmix@inbox.ru"
                     android:textSize="@dimen/font_size_medial_14"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -76,14 +84,18 @@
                 android:layout_marginRight="@dimen/spacing_medial_24">
 
                 <EditText
+                    android:id="@+id/pass_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
                     android:hint="@string/hint_password"
-                    android:textSize="@dimen/font_size_medial_14"/>
+                    android:textSize="@dimen/font_size_medial_14"
+                    android:inputType="textPassword"
+                    android:text="Avangard1902"/>
             </android.support.design.widget.TextInputLayout>
 
             <Button
+                style="@style/AppTheme.Button.Red"
                 android:id="@+id/login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_medial_32"
@@ -99,6 +111,7 @@
                 android:textColor="@color/color_white"/>
 
             <TextView
+                android:id="@+id/remember_pass_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/login_btn"
@@ -108,12 +121,7 @@
                 android:paddingBottom="@dimen/spacing_medial_24"
                 android:text="@string/remind_pass"/>
         </RelativeLayout>
-    </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
-    <android.support.design.widget.FloatingActionButton
-        style="@style/fab_login"
-        android:layout_marginTop="@dimen/spacing_large_56"
-        app:backgroundTint="@color/color_red"
-        app:layout_anchor="@id/layout_mark_ins"
-        app:layout_anchorGravity="bottom|right"/>
+
 </android.support.design.widget.CoordinatorLayout>

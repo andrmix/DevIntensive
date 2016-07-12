@@ -82,7 +82,6 @@
     </style>
 
     <style name="topText.dig" parent="topText">
-        <item name="android:text">@string/count_dig</item>
         <item name="android:textSize">@dimen/font_size_large_20</item>
     </style>
 
@@ -148,6 +147,11 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">@dimen/fab_right_space</item>
         <item name="android:src">@drawable/ic_add_black_24dp</item>
+    </style>
+
+    <style name="AppTheme.Button.Red" parent="Base.Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/color_accent</item>
+        <item name="android:textColor">@color/color_white</item>
     </style>
 
 </resources>

@@ -10,12 +10,7 @@
     <string name="count_projects">Проектов</string>
 
     <!-- test values -->
-    <string name="count_dig">5</string>
-    <string name="mobile_number">89503300555</string>
     <string name="email">andrmix@inbox.ru</string>
-    <string name="vk_profile">vk.com/andrmix</string>
-    <string name="gh_repo">github.com/andrmix/DevIntensive</string>
-    <string name="about_myself">Очень рад, что подписался на данный интенсив! Спасибо большое! =))</string>
     <string name="user_profile.placeholder.image">Изменить фотографию профиля</string>
     <string name="user_profile.dialog.gallery">Загрузить из галереи</string>
     <string name="user_profile.dialog.camera">Сделать снимок</string>
@@ -37,4 +32,6 @@
     <string name="txt_https">https://</string>
     <string name="vk_address">vk.com</string>
     <string name="git_address">github.com</string>
+
+    <string name="internal_storage">Internal storage</string>
 </resources>

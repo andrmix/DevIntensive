@@ -1,37 +1,50 @@
 package com.softdesign.devintensive.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.RectF;
 
-public class ImageHelper {
+import com.squareup.picasso.Transformation;
+
+public class ImageHelper implements Transformation {
     /**
      * Скругление аватара
-     * @param bitmap битмапа аватара
+     *
+     * @param source битмапа аватара
      * @return
      */
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-        final Canvas canvas = new Canvas(output);
+    @Override
+    public Bitmap transform(Bitmap source) {
+        int size = Math.min(source.getWidth(), source.getHeight());
 
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
+        int x = (source.getWidth() - size) / 2;
+        int y = (source.getHeight() - size) / 2;
 
+        Bitmap squaredBitmap = Bitmap.createBitmap(source, x, y, size, size);
+        if (squaredBitmap != source) {
+            source.recycle();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
+
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+        paint.setShader(shader);
         paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        canvas.drawOval(rectF, paint);
 
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
+        float r = size / 2f;
+        canvas.drawCircle(r, r, r, paint);
 
-        bitmap.recycle();
+        squaredBitmap.recycle();
+        return bitmap;
+    }
 
-        return output;
+    @Override
+    public String key() {
+        return "circle";
     }
 }

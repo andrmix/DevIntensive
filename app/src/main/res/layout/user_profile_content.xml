@@ -23,6 +23,7 @@
                 android:layout_weight="1">
 
                 <TextView
+                    android:id="@+id/user_rating_txt"
                     style="@style/topText.dig"/>
 
                 <TextView
@@ -40,6 +41,7 @@
                 android:layout_weight="2">
 
                 <TextView
+                    android:id="@+id/user_lines_txt"
                     style="@style/topText.dig"/>
 
                 <TextView
@@ -57,6 +59,7 @@
                 android:layout_weight="1">
 
                 <TextView
+                    android:id="@+id/user_project_txt"
                     style="@style/topText.dig"/>
 
                 <TextView
@@ -84,8 +87,7 @@
                         android:id="@+id/user_phone_et"
                         style="@style/edit_text"
                         android:hint="@string/hint_mobile"
-                        android:inputType="phone"
-                        android:text="@string/mobile_number"/>
+                        android:inputType="phone"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
@@ -116,8 +118,7 @@
                     <EditText
                         android:id="@+id/user_email_et"
                         style="@style/edit_text"
-                        android:hint="@string/hint_email"
-                        android:text="@string/email"/>
+                        android:hint="@string/hint_email"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
@@ -148,8 +149,7 @@
                     <EditText
                         android:id="@+id/user_vk_et"
                         style="@style/edit_text"
-                        android:hint="@string/hint_profile"
-                        android:text="@string/vk_profile"/>
+                        android:hint="@string/hint_profile"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
@@ -180,8 +180,7 @@
                     <EditText
                         android:id="@+id/user_git_et"
                         style="@style/edit_text"
-                        android:hint="@string/hint_repo"
-                        android:text="@string/gh_repo"/>
+                        android:hint="@string/hint_repo"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
@@ -212,8 +211,7 @@
                     <EditText
                         android:id="@+id/user_bio_et"
                         style="@style/edit_text"
-                        android:hint="@string/hint_about"
-                        android:text="@string/about_myself"/>
+                        android:hint="@string/hint_about"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
