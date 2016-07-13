@@ -19,14 +19,12 @@
         <TextView
             style="@style/drawerTxt"
             android:id="@+id/user_name_txt"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/app_name"/>
+            android:fontFamily="sans-serif-medium"/>
 
         <TextView
             style="@style/drawerTxt"
             android:id="@+id/user_email_txt"
-            android:fontFamily="sans-serif"
-            android:text="@string/email"/>
+            android:fontFamily="sans-serif"/>
 
     </LinearLayout>
 </RelativeLayout>

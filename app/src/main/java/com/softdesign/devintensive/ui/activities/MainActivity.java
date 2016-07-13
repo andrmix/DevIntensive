@@ -35,6 +35,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
@@ -101,9 +102,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.navigation_view)
     NavigationView navigationView;
 
+    @BindView(R.id.user_rating_txt)
+    TextView mUserValueRating;
+    @BindView(R.id.user_lines_txt)
+    TextView mUserValueCodeLines;
+    @BindView(R.id.user_project_txt)
+    TextView mUserValueProjects;
+
+    private TextView mUserName, mUserEmail;
+
+    List<TextView> mUserValueViews;
+
     private AppBarLayout.LayoutParams mAppBarParams = null;
     private ImageView mAvatar;
     List<EditText> mUserInfoViews;
+
+
     File mPhotoFile = null;
     private int validatedFieldsFlag = -1;
 
@@ -138,6 +152,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mUserInfoViews.add(mUserGit);
         mUserInfoViews.add(mUserBio);
 
+        //заполнение списка TextView профиля
+        mUserValueViews = new ArrayList<>();
+        mUserValueViews.add(mUserValueRating);
+        mUserValueViews.add(mUserValueCodeLines);
+        mUserValueViews.add(mUserValueProjects);
+
         //назначение события нажатия
         mFab.setOnClickListener(this);
         mProfilePlaceholder.setOnClickListener(this);
@@ -153,11 +173,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setupDrawer();
 
         //загрузка пользовательских данных
-        loadUserInfoValue();
+        initUserFields();
+        initUserInfoValue();
 
         //загрузка фото профиля
         Picasso.with(this).load(mDataManager.getPreferencesManager().loadUserPhoto())
-                .placeholder(R.drawable.andrmix)
+                .placeholder(R.drawable.pens_small)
                 .into(mProfileImage);
 
         if (savedInstanceState == null) {
@@ -261,7 +282,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         changeEditMode(0);
                         mCurrentEditMode = 0;
                         //сохранение введенных данных
-                        saveUserInfoValue();
+                        saveUserFields();
                     } else {
                         //проверка не пройдена - сообщение об ошибке
                         showErrorSnackbar(validatedFieldsFlag);
@@ -400,8 +421,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //скругление аватара в Drower'е
         mAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.avatar);
-        Bitmap btMap = BitmapFactory.decodeResource(getResources(), R.drawable.pens_small);
-        mAvatar.setImageBitmap(ImageHelper.getRoundedCornerBitmap(btMap));
+
+        Picasso.with(this).load(mDataManager.getPreferencesManager().loadUserAvatar())
+                .transform(new ImageHelper())
+                .into(mAvatar);
+
+        mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
+        mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
+        initUserFio();
     }
 
     /**
@@ -449,16 +476,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //включить возможность принятия фокуса
                 editText.setFocusable(true);
                 editText.setFocusableInTouchMode(true);
-                //вывод изображения выбора фото профиля
-                showProfilePlaceholder();
-                //заблокировать Toolbar
-                lockToolbar();
-                mCollapsingToolbar.setExpandedTitleColor(Color.TRANSPARENT);
-                //перевести фокус в поле номера телефона
-                mUserPhone.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(0, 0);
             }
+            //вывод изображения выбора фото профиля
+            showProfilePlaceholder();
+            //заблокировать Toolbar
+            lockToolbar();
+            mCollapsingToolbar.setExpandedTitleColor(Color.TRANSPARENT);
+            //перевести фокус в поле номера телефона
+            mUserPhone.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(0, 0);
             //выключить режим редактирования
         } else {
             mFab.setImageResource(R.drawable.ic_edit_black_24dp);
@@ -469,14 +496,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //выключить возможность принятия фокуса
                 editText.setFocusable(false);
                 editText.setFocusableInTouchMode(false);
-                //убрать изображение выбора фото профиля
-                hideProfilePlaceholder();
-                //разблокировать Toolbar
-                unlockToolbar();
-                //сохранить введенные данные
-                saveUserInfoValue();
-                mCollapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.color_white));
             }
+            //убрать изображение выбора фото профиля
+            hideProfilePlaceholder();
+            //разблокировать Toolbar
+            unlockToolbar();
+            //сохранить введенные данные
+            mCollapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.color_white));
         }
     }
 
@@ -484,7 +510,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * Загрузка пользовательских данных
      */
-    private void loadUserInfoValue() {
+    private void initUserFields() {
         //Загрузка пользовательских данных из PreferencesManager
         List<String> userData = mDataManager.getPreferencesManager().loadUserProfileData();
         //заполнение полей
@@ -496,7 +522,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * Сохранение пользовательских данных
      */
-    private void saveUserInfoValue() {
+    private void saveUserFields() {
         //сбор данных из полей
         List<String> userData = new ArrayList<>();
         for (EditText userField : mUserInfoViews) {
@@ -504,6 +530,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         //Сохранение пользовательских данных в PreferencesManager
         mDataManager.getPreferencesManager().saveUserProfileData(userData);
+    }
+
+    private void initUserInfoValue() {
+        List<String> userData = mDataManager.getPreferencesManager().loadUserProfileValues();
+        for (int i = 0; i < userData.size(); i++) {
+            mUserValueViews.get(i).setText(userData.get(i));
+        }
     }
 
     /**
@@ -694,7 +727,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     /**
-     * Вставка нового изображения в фото профиля
+     * Вставка нового изображения в фото профиля / отправка на сервер
      *
      * @param selectedImage uri нового изображения
      */
@@ -702,7 +735,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Picasso.with(this)
                 .load(selectedImage)
                 .into(mProfileImage);
-        mDataManager.getPreferencesManager().saveUserPhoto(selectedImage);
+
+        Uri photoProfileOnServer = mDataManager.getPreferencesManager().loadUserPhoto();
+        String uriServ = photoProfileOnServer.toString();
+        String uriLocal = selectedImage.toString();
+
+        if (uriServ != uriLocal) {
+            mDataManager.getFileUploader().uploadFile(selectedImage);
+        }
     }
 
     /**
@@ -860,5 +900,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         return result;
+    }
+
+    private void initUserFio() {
+        List<String> userFioValues = mDataManager.getPreferencesManager().loadUserFio();
+        mUserName.setText(userFioValues.get(0).toString() + " " + userFioValues.get(1).toString());
+        mUserEmail.setText(userFioValues.get(2).toString());
     }
 }

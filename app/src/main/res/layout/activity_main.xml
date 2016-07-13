@@ -37,7 +37,7 @@
                     <ImageView
                         android:id="@+id/user_photo_img"
                         style="@style/user_foto"
-                        android:src="@drawable/andrmix"/>
+                        android:src="@drawable/pens_small"/>
 
                     <RelativeLayout
                         android:id="@+id/profile_placeholder"
