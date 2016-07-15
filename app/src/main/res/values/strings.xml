@@ -34,4 +34,9 @@
     <string name="git_address">github.com</string>
 
     <string name="internal_storage">Internal storage</string>
+    <string name="bio">Lets go Pens!</string>
+
+    <string name="menu_search">menu_search</string>
+    <string name="search_hint">search_hint</string>
+    <string name="search_result">search_result</string>
 </resources>

@@ -1,0 +1,114 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                style="@style/topLayout"
+                android:layout_marginLeft="@dimen/spacing_normal_16"
+                android:layout_marginRight="@dimen/spacing_normal_16"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/user_rating_txt"
+                    style="@style/topText.dig"/>
+
+                <TextView
+                    style="@style/topText.text"
+                    android:text="@string/rating"/>
+            </LinearLayout>
+
+            <View
+                style="@style/separator_vertical"/>
+
+            <LinearLayout
+                style="@style/topLayout"
+                android:layout_marginLeft="@dimen/spacing_normal_16"
+                android:layout_marginRight="@dimen/spacing_normal_16"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/user_lines_txt"
+                    style="@style/topText.dig"/>
+
+                <TextView
+                    style="@style/topText.text"
+                    android:text="@string/strings_of_code"/>
+            </LinearLayout>
+
+            <View
+                style="@style/separator_vertical"/>
+
+            <LinearLayout
+                style="@style/topLayout"
+                android:layout_marginLeft="@dimen/spacing_normal_16"
+                android:layout_marginRight="@dimen/spacing_normal_16"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/user_project_txt"
+                    style="@style/topText.dig"/>
+
+                <TextView
+                    style="@style/topText.text"
+                    android:text="@string/count_projects"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/layoutOuter">
+
+            <ImageView
+                style="@style/icon.left"
+                android:src="@drawable/ic_github_black_24dp"/>
+
+            <ListView
+                android:id="@+id/repositories_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/spacing_medium_32"/>
+
+        </LinearLayout>
+
+        <View
+            style="@style/separator"/>
+
+        <LinearLayout
+            style="@style/layoutOuter">
+
+            <ImageView
+                style="@style/icon.left"
+                android:src="@drawable/ic_account_circle_black_24dp"/>
+
+            <LinearLayout
+                style="@style/layoutInner"
+                android:layout_height="@dimen/size_large_72">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/user_bio_et"
+                        style="@style/edit_text"
+                        android:hint="@string/hint_about"/>
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

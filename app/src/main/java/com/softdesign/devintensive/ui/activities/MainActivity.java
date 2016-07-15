@@ -6,10 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -25,7 +24,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -741,7 +739,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         String uriLocal = selectedImage.toString();
 
         if (uriServ != uriLocal) {
-            mDataManager.getFileUploader().uploadFile(selectedImage);
+            mDataManager.getFileUploader().uploadFile(mDataManager.getPreferencesManager().getUserId(), selectedImage);
         }
     }
 
