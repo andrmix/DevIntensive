@@ -20,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FileUploader {
-    public void uploadFile(Uri fileUri) {
+    public void uploadFile(String userId, Uri fileUri) {
         FileUploadService service =
                 ServiceGenerator.createService(FileUploadService.class);
 
@@ -32,7 +32,7 @@ public class FileUploader {
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
 
-        Call<ResponseBody> call = service.upload(body);
+        Call<ResponseBody> call = service.upload(userId, body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call,

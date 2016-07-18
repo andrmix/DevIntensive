@@ -111,7 +111,6 @@
     <style name="toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
-        <item name="android:theme">@style/AppTheme.PopupOverlay</item>
     </style>
 
     <style name="fab">
@@ -152,6 +151,25 @@
     <style name="AppTheme.Button.Red" parent="Base.Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/color_accent</item>
         <item name="android:textColor">@color/color_white</item>
+    </style>
+
+    <!--Toolbar-->
+    <style name="ToolBarStyle" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/color_white</item>
+        <item name="android:textColorSecondary">@color/color_white</item>
+        <item name="android:actionMenuTextColor">@color/color_white</item>
+    </style>
+
+    <style name="Theme.MyCompatTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@color/color_accent</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="actionBarStyle">@style/ActionBar</item>
+    </style>
+
+    <style name="ActionBar"
+           parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/color_accent</item>
+        <item name="background">@color/color_accent</item>
     </style>
 
 </resources>

@@ -32,5 +32,6 @@
     <dimen name="font_size_medial_14">14sp</dimen>
     <dimen name="font_size_medium_16">16sp</dimen>
     <dimen name="font_size_large_20">20sp</dimen>
+    <dimen name="font_size_largest_24">24sp</dimen>
 
 </resources>
