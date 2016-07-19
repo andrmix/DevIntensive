@@ -113,6 +113,10 @@ public class UserModelRes {
         public String getTitle() {
             return title;
         }
+
+        public String getId() {
+            return id;
+        }
     }
 
     public class PublicInfo {

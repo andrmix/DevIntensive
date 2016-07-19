@@ -121,13 +121,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Uri mSelectedImage = null;
 
+    private MenuItem mUserProfileItem;
+
     /**
      * Обработка события при создании или перезапуске активности
      *
      * @param savedInstanceState сохраненные пользовательские данные
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //присвоение разметки активности
@@ -216,7 +218,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * Обработка события при отображении активности на экране
      */
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
     }
@@ -225,7 +227,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * Обработка события при сворачивании активности
      */
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause");
     }
@@ -370,7 +372,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @param outState
      */
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //сохранение текущего режима работы с профилем
         outState.putInt(ConstantManager.EDIT_MODE_KEY, mCurrentEditMode);
@@ -408,14 +410,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                showSnackbar(item.getTitle().toString());
-                //выделение элемента
-                item.setChecked(true);
+                switch (item.getItemId()) {
+                    case R.id.team_menu:
+                        doGotoUserListActivity();
+                    case R.id.exit_menu:
+                        System.exit(0);
+                }
+
                 //закрытие Drower'а
                 mNavigationDrawer.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
+
+        mUserProfileItem = navigationView.getMenu().findItem(R.id.user_profile_menu);
+        mUserProfileItem.setChecked(true);
 
         //скругление аватара в Drower'е
         mAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.avatar);
@@ -427,6 +436,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
         mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
         initUserFio();
+    }
+
+    private void doGotoUserListActivity() {
+        Intent intent = new Intent(MainActivity.this, UserListActivity.class);
+        startActivity(intent);
     }
 
     /**

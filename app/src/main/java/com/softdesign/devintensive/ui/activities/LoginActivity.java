@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +14,13 @@ import android.widget.TextView;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
+import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.data.storage.models.Repository;
+import com.softdesign.devintensive.data.storage.models.RepositoryDao;
+import com.softdesign.devintensive.data.storage.models.User;
+import com.softdesign.devintensive.data.storage.models.UserDao;
+import com.softdesign.devintensive.utils.AppConfig;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
 
 import java.util.ArrayList;
@@ -38,6 +45,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     CoordinatorLayout mCoordinatorLayout;
 
     private DataManager mDataManager;
+    private RepositoryDao mRepositoryDao;
+    private UserDao mUserDao;
 
     /**
      * Обработка события при создании или перезапуске активности
@@ -45,12 +54,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * @param savedInstanceState сохраненные пользовательские данные
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //присвоение разметки активности
         setContentView(R.layout.activity_login);
 
         mDataManager = DataManager.getInstance();
+        mUserDao = DataManager.getInstance().getDaoSession().getUserDao();
+        mRepositoryDao = DataManager.getInstance().getDaoSession().getRepositoryDao();
 
         //инициализация View через ButterKnife
         ButterKnife.bind(this);
@@ -58,6 +69,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         //назначение события нажатия
         mButtonLogin.setOnClickListener(this);
         mRememberPass.setOnClickListener(this);
+
+
     }
 
 
@@ -88,13 +101,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void loginSuccess(UserModelRes userModel) {
-        showSnackbar(userModel.getData().getToken());
         mDataManager.getPreferencesManager().saveAuthToken(userModel.getData().getToken());
         mDataManager.getPreferencesManager().saveUserId(userModel.getData().getUser().getId());
 
         saveUserValues(userModel);
-        Intent loginIntent = new Intent(this, UserListActivity.class);
-        startActivity(loginIntent);
+        saveUserInDb();
+
+        android.os.Handler handler = new android.os.Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent loginIntent = new Intent(LoginActivity.this, UserListActivity.class);
+                hideProgress();
+                startActivity(loginIntent);
+            }
+        }, AppConfig.START_DELAY);
     }
 
     private void signIn() {
@@ -155,5 +176,57 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mDataManager.getPreferencesManager().saveUserFio(userFio);
         mDataManager.getPreferencesManager().saveUserPhoto(Uri.parse(userModel.getData().getUser().getPublicInfo().getPhoto()));
         mDataManager.getPreferencesManager().saveUserAvatar(Uri.parse(userModel.getData().getUser().getPublicInfo().getAvatar()));
+    }
+
+    private void saveUserInDb() {
+        Log.e("SAVING_FLAG", "SAVE 1");
+        Call<UserListRes> call = mDataManager.getUserListFromNetwork();
+        call.enqueue(new Callback<UserListRes>() {
+            @Override
+            public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
+                try {
+                    Log.e("SAVING_FLAG", "SAVE 2");
+                    if (response.code() == 200){
+                        // TODO: 19.07.2016 сохранение в БД через хронос
+                        
+                        Log.e("SAVING_FLAG", "SAVE 3 = 200 OK");
+                        List<Repository> allRepositories = new ArrayList<Repository>();
+                        List<User> allUsers = new ArrayList<User>();
+
+                        for (UserListRes.UserData userRes : response.body().getData()) {
+                            allRepositories.addAll(getRepoListFromUserRes(userRes));
+                            allUsers.add(new User(userRes));
+                        }
+
+                        mRepositoryDao.insertOrReplaceInTx(allRepositories);
+                        mUserDao.insertOrReplaceInTx(allUsers);
+
+                    } else {
+                        showSnackbar("Список пользователей не может быть получен");
+                        Log.e(TAG, "onResponse: " + String.valueOf(response.errorBody().source()));
+                    }
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    showSnackbar("Что-то пошло не так");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserListRes> call, Throwable t) {
+                // TODO: 14.07.2016 Обработать ошибки
+            }
+        });
+    }
+
+    private List<Repository> getRepoListFromUserRes(UserListRes.UserData userData){
+        final String userId = userData.getId();
+
+        List<Repository> repositories = new ArrayList<>();
+        for (UserModelRes.Repo repositoryRes : userData.getRepositories().getRepo()) {
+            repositories.add(new Repository(repositoryRes, userId));
+        }
+
+        return repositories;
     }
 }

@@ -36,7 +36,10 @@
     <string name="internal_storage">Internal storage</string>
     <string name="bio">Lets go Pens!</string>
 
-    <string name="menu_search">menu_search</string>
+    <string name="menu_search">Поиск пользователя</string>
     <string name="search_hint">search_hint</string>
     <string name="search_result">search_result</string>
+    <string name="menu_exit">Выход</string>
+    <string name="menu_my_team">Моя команда</string>
+    <string name="menu_my_profile">Мой профиль</string>
 </resources>

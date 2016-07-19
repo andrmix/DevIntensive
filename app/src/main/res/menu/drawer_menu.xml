@@ -5,11 +5,15 @@
             android:id="@+id/user_profile_menu"
             android:checkable="true"
             android:icon="@drawable/ic_account_circle_black_24dp1"
-            android:title="Мой профиль"/>
+            android:title="@string/menu_my_profile"/>
         <item
             android:id="@+id/team_menu"
             android:checkable="true"
             android:icon="@drawable/ic_people_black_24dp"
-            android:title="Моя команда"/>
+            android:title="@string/menu_my_team"/>
+        <item
+            android:id="@+id/exit_menu"
+            android:icon="@drawable/ic_people_black_24dp"
+            android:title="@string/menu_exit"/>
     </group>
 </menu>

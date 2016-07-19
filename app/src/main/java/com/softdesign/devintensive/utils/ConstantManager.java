@@ -36,4 +36,6 @@ public interface ConstantManager {
     int MAIL_FAIL = 2;
     int VK_FAIL = 3;
     int GIT_FAIL = 4;
+    int SEARCH_DELAY = 3000;
+    int NO_SEARCH_DELAY = 0;
 }
