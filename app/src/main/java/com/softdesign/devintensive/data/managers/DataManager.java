@@ -5,9 +5,6 @@ import android.content.Context;
 import com.softdesign.devintensive.data.network.PicassoCache;
 import com.softdesign.devintensive.data.network.RestService;
 import com.softdesign.devintensive.data.network.ServiceGenerator;
-import com.softdesign.devintensive.data.network.req.UserLoginReq;
-import com.softdesign.devintensive.data.network.res.UserListRes;
-import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.data.storage.models.DaoSession;
 import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.data.storage.models.UserDao;
@@ -16,8 +13,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
 
 public class DataManager {
     private static DataManager INSTANCE = null;
@@ -75,13 +70,13 @@ public class DataManager {
 
     //region ============= Network =============
 
-    public Call<UserModelRes> loginUser(UserLoginReq userLoginReq) {
+    /*public Call<UserModelRes> loginUser(UserLoginReq userLoginReq) {
         return mRestService.loginUser(userLoginReq);
-    }
+    }*/
 
-    public Call<UserListRes> getUserListFromNetwork() {
+    /*public Call<UserListRes> getUserListFromNetwork() {
         return mRestService.getUserList();
-    }
+    }*/
 
 
     //endregion
@@ -92,23 +87,6 @@ public class DataManager {
     public DaoSession getDaoSession() {
         return mDaoSession;
     }
-
-   /* public List<User> getUserListFromDb() {
-        List<User> userList = new ArrayList<>();
-
-        try {
-            Log.e("ERR_FLAG", "before mDaoSession");
-            userList = mDaoSession.queryBuilder(User.class)
-                    .where(UserDao.Properties.CodeLines.gt(0))
-                    .orderDesc(UserDao.Properties.CodeLines)
-                    .build()
-                    .list();
-            Log.e("ERR_FLAG", "after mDaoSession");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return userList;
-    }*/
 
     public List<User> getUserListByName(String query) {
         List<User> userList = new ArrayList<>();

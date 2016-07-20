@@ -21,12 +21,15 @@ import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.storage.models.Profile;
+import com.softdesign.devintensive.data.storage.models.ProfileDTO;
 import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.data.storage.models.UserDTO;
 import com.softdesign.devintensive.ui.adapters.UsersAdapter;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.ImageHelper;
-import com.softdesign.devintensive.utils.LoadUsersFromDb;
+import com.softdesign.devintensive.utils.operations.LoadMeFromDb;
+import com.softdesign.devintensive.utils.operations.LoadUsersFromDb;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -74,10 +77,10 @@ public class UserListActivity extends BaseActivity {
 
         mHandler = new Handler();
 
+        Log.e("onCreate UserListA", "runOperation");
         runOperation(new LoadUsersFromDb());
 
         setupToolbar();
-        setupDrawer();
     }
 
     @Override
@@ -100,21 +103,22 @@ public class UserListActivity extends BaseActivity {
     private void loadUsersFromDb(List<User> userList) {
         if (userList.size() == 0) {
             showSnackbar("Список пользователей не может быть загружен");
-            Log.e("ERR_FLAG", "loadUsersFromDb");
+            Log.e("ERR_FLAG", "ERROR loadUsersFromDb");
             hideProgress();
         } else {
+            Log.e("loadUsersFromDb", "to showUsers");
             showUsers(userList);
         }
     }
 
-    private void setupDrawer() {
+    private void setupDrawer(final Profile user) {
         //при нажатии на элемент списка в Drawer'е выводится Snackbar с текстом элемента
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.user_profile_menu:
-                        doGotoMainActivity();
+                        doGotoMainActivity(user);
                     case R.id.exit_menu:
                         System.exit(0);
                 }
@@ -131,17 +135,21 @@ public class UserListActivity extends BaseActivity {
         //скругление аватара в Drawer'е
         mAvatar = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.avatar);
 
-        Picasso.with(this).load(mDataManager.getPreferencesManager().loadUserAvatar())
+        Picasso.with(this).load(user.getAvatar())
                 .transform(new ImageHelper())
                 .into(mAvatar);
 
         mUserName = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
         mUserEmail = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
-        initUserFio();
+
+        mUserName.setText(user.getFullName());
+        mUserEmail.setText(user.getEmail());
     }
 
-    private void doGotoMainActivity() {
+    private void doGotoMainActivity(Profile user) {
+        ProfileDTO profileDTO = new ProfileDTO(user);
         Intent intent = new Intent(UserListActivity.this, MainActivity.class);
+        intent.putExtra(ConstantManager.INTENT_MAIN_KEY, profileDTO);
         startActivity(intent);
     }
 
@@ -190,6 +198,8 @@ public class UserListActivity extends BaseActivity {
         });
 
         mRecyclerView.swapAdapter(mUsersAdapter, false);
+
+        Log.e("showUsers", "to hideProgress");
         hideProgress();
     }
 
@@ -212,16 +222,22 @@ public class UserListActivity extends BaseActivity {
         }
     }
 
-    private void initUserFio() {
-        List<String> userFioValues = mDataManager.getPreferencesManager().loadUserFio();
-        mUserName.setText(userFioValues.get(0).toString() + " " + userFioValues.get(1).toString());
-        mUserEmail.setText(userFioValues.get(2).toString());
+    public void onOperationFinished(final LoadUsersFromDb.Result result) {
+        Log.e("onOperationFinished", "LoadUsersFromDb - in");
+        if (result.isSuccessful()) {
+            Log.e("onOperationFinished", "LoadUsersFromDb - isSuccessful");
+            loadUsersFromDb(result.getOutput());
+            runOperation(new LoadMeFromDb(mDataManager.getPreferencesManager().getUserId()));
+        } else {
+            Log.e("LoadChronos","ErrLoadChronos");
+        }
     }
 
-    public void onOperationFinished(final LoadUsersFromDb.Result result) {
+    public void onOperationFinished(final LoadMeFromDb.Result result) {
+        Log.e("onOperationFinished", "LoadMeFromDb - in");
         if (result.isSuccessful()) {
-            loadUsersFromDb(result.getOutput());
-            Log.e("LoadChronos","Good");
+            Log.e("onOperationFinished", "LoadMeFromDb - isSuccessful");
+            setupDrawer(result.getOutput());
         } else {
             Log.e("LoadChronos","ErrLoadChronos");
         }

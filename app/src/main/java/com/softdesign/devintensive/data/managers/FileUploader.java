@@ -1,13 +1,10 @@
 package com.softdesign.devintensive.data.managers;
 
-import android.app.Application;
 import android.net.Uri;
 import android.util.Log;
 
 import com.softdesign.devintensive.data.network.FileUploadService;
 import com.softdesign.devintensive.data.network.ServiceGenerator;
-import com.softdesign.devintensive.utils.DevintensiveApplication;
-import com.softdesign.devintensive.utils.FileUtils;
 
 import java.io.File;
 
@@ -40,7 +37,7 @@ public class FileUploader {
                 if(response.code() == 200) {
                     Log.v("Upload", "UPLOAD SUCCESS");
                 } else {
-                    Log.v("Upload", "UPLOAD FAIL");
+                    Log.v("Upload", String.valueOf(response.code()));
                 }
             }
 

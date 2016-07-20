@@ -23,6 +23,7 @@ public interface ConstantManager {
     String USER_CODE_LINES_VALUE = "USER_CODE_LINES_VALUE";
     String USER_PROJECT_VALUE = "USER_PROJECT_VALUE";
     String PARCELABLE_KEY = "PARCELABLE_KEY";
+    String INTENT_MAIN_KEY = "INTENT_MAIN_KEY";
 
     int LOAD_PROFILE_PHOTO = 1;
     int REQUEST_CAMERA_PICTURE = 99;
@@ -38,4 +39,5 @@ public interface ConstantManager {
     int GIT_FAIL = 4;
     int SEARCH_DELAY = 3000;
     int NO_SEARCH_DELAY = 0;
+
 }
