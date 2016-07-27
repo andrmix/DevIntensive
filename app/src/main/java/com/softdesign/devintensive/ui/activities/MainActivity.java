@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.storage.models.ProfileDTO;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.ImageHelper;
 import com.squareup.picasso.Picasso;
@@ -121,13 +122,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Uri mSelectedImage = null;
 
+    private MenuItem mUserProfileItem;
+
     /**
      * Обработка события при создании или перезапуске активности
      *
      * @param savedInstanceState сохраненные пользовательские данные
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //присвоение разметки активности
@@ -167,15 +170,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //настройка Toolbar'а
         setupToolbar();
 
+        ProfileDTO user = getIntent().getParcelableExtra(ConstantManager.INTENT_MAIN_KEY);
+
         //настройка Drower'а
-        setupDrawer();
+        setupDrawer(user);
 
         //загрузка пользовательских данных
-        initUserFields();
-        initUserInfoValue();
+        initUserFields(user);
 
         //загрузка фото профиля
-        Picasso.with(this).load(mDataManager.getPreferencesManager().loadUserPhoto())
+        Picasso.with(this).load(user.getPhoto())
                 .placeholder(R.drawable.pens_small)
                 .into(mProfileImage);
 
@@ -216,7 +220,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * Обработка события при отображении активности на экране
      */
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
     }
@@ -225,7 +229,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * Обработка события при сворачивании активности
      */
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause");
     }
@@ -370,7 +374,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @param outState
      */
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //сохранение текущего режима работы с профилем
         outState.putInt(ConstantManager.EDIT_MODE_KEY, mCurrentEditMode);
@@ -403,30 +407,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * Настройка Drower'а
      */
-    private void setupDrawer() {
+    private void setupDrawer(ProfileDTO user) {
         //при нажатии на элемент списка в Drower'е выводится Snackbar с текстом элемента
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                showSnackbar(item.getTitle().toString());
-                //выделение элемента
-                item.setChecked(true);
+                switch (item.getItemId()) {
+                    case R.id.team_menu:
+                        doGotoUserListActivity();
+                    case R.id.exit_menu:
+                        System.exit(0);
+                }
+
                 //закрытие Drower'а
                 mNavigationDrawer.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
 
+        mUserProfileItem = navigationView.getMenu().findItem(R.id.user_profile_menu);
+        mUserProfileItem.setChecked(true);
+
         //скругление аватара в Drower'е
         mAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.avatar);
 
-        Picasso.with(this).load(mDataManager.getPreferencesManager().loadUserAvatar())
+        Picasso.with(this).load(user.getAvatar())
                 .transform(new ImageHelper())
                 .into(mAvatar);
 
         mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt);
         mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email_txt);
-        initUserFio();
+        mUserName.setText(user.getFullName());
+        mUserEmail.setText(user.getEmail());
+    }
+
+    private void doGotoUserListActivity() {
+        Intent intent = new Intent(MainActivity.this, UserListActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -508,13 +525,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * Загрузка пользовательских данных
      */
-    private void initUserFields() {
-        //Загрузка пользовательских данных из PreferencesManager
-        List<String> userData = mDataManager.getPreferencesManager().loadUserProfileData();
-        //заполнение полей
-        for (int i = 0; i < userData.size(); i++) {
-            mUserInfoViews.get(i).setText(userData.get(i));
-        }
+    private void initUserFields(ProfileDTO user) {
+        mUserPhone.setText(user.getPhone());
+        mUserMail.setText(user.getEmail());
+        mUserVk.setText(user.getVk());
+        mUserGit.setText(user.getRepo());
+        mUserBio.setText(user.getBio());
+
+        mUserValueRating.setText(user.getRating());
+        mUserValueCodeLines.setText(user.getCodeLines());
+        mUserValueProjects.setText(user.getProjects());
     }
 
     /**
@@ -898,11 +918,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         return result;
-    }
-
-    private void initUserFio() {
-        List<String> userFioValues = mDataManager.getPreferencesManager().loadUserFio();
-        mUserName.setText(userFioValues.get(0).toString() + " " + userFioValues.get(1).toString());
-        mUserEmail.setText(userFioValues.get(2).toString());
     }
 }

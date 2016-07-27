@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,8 +14,15 @@ import android.widget.TextView;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
+import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.data.storage.models.Profile;
+import com.softdesign.devintensive.data.storage.models.Repository;
+import com.softdesign.devintensive.data.storage.models.User;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
+import com.softdesign.devintensive.utils.operations.CheckLogin;
+import com.softdesign.devintensive.utils.operations.LoadUserListFromNetwork;
+import com.softdesign.devintensive.utils.operations.SaveUsersInDb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +46,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     CoordinatorLayout mCoordinatorLayout;
 
     private DataManager mDataManager;
+    List<Profile> myProfile;
+
 
     /**
      * Обработка события при создании или перезапуске активности
@@ -45,7 +55,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * @param savedInstanceState сохраненные пользовательские данные
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //присвоение разметки активности
         setContentView(R.layout.activity_login);
@@ -87,37 +97,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         startActivity(rememberIntent);
     }
 
-    private void loginSuccess(UserModelRes userModel) {
-        showSnackbar(userModel.getData().getToken());
+    private void saveTokenAndId(UserModelRes userModel) {
         mDataManager.getPreferencesManager().saveAuthToken(userModel.getData().getToken());
         mDataManager.getPreferencesManager().saveUserId(userModel.getData().getUser().getId());
-
-        saveUserValues(userModel);
-        Intent loginIntent = new Intent(this, UserListActivity.class);
-        startActivity(loginIntent);
     }
 
     private void signIn() {
         if (NetworkStatusChecker.isNetworkAvailible(this)) {
-            Call<UserModelRes> call = mDataManager.loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
-            call.enqueue(new Callback<UserModelRes>() {
-                @Override
-                public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
-                    if (response.code() == 200) {
-                        showProgress();
-                        loginSuccess(response.body());
-                    } else if (response.code() == 404) {
-                        showSnackbar("Неверный логин или пароль");
-                    } else {
-                        showSnackbar("Все пропало Шеф!!!");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<UserModelRes> call, Throwable t) {
-                    // TODO: 11.07.2016 обработать ошибки ретрофита
-                }
-            });
+            Log.e("signIn", "showProgress()");
+            showProgress();
+            Log.e("signIn", "runOperation(new CheckLogin)");
+            runOperation(new CheckLogin(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString())));
         } else {
             showSnackbar("Сеть на данный момент не доступна, попробуйте позже");
         }
@@ -156,4 +146,106 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mDataManager.getPreferencesManager().saveUserPhoto(Uri.parse(userModel.getData().getUser().getPublicInfo().getPhoto()));
         mDataManager.getPreferencesManager().saveUserAvatar(Uri.parse(userModel.getData().getUser().getPublicInfo().getAvatar()));
     }
+
+    private List<Repository> getRepoListFromUserRes(UserListRes.UserData userData) {
+        final String userId = userData.getId();
+
+        List<Repository> repositories = new ArrayList<>();
+        for (UserModelRes.Repo repositoryRes : userData.getRepositories().getRepo()) {
+            repositories.add(new Repository(repositoryRes, userId));
+        }
+
+        return repositories;
+    }
+
+    public void onOperationFinished(final CheckLogin.Result result) {
+        Log.e("onOperationFinished", "CheckLogin - in");
+        if (result.isSuccessful()) {
+            Log.e("onOperationFinished", "CheckLogin - isSuccessful");
+            Call<UserModelRes> call = result.getOutput();
+            call.enqueue(new Callback<UserModelRes>() {
+                @Override
+                public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
+                    if (response.code() == 200) {
+                        Log.e("onOperationFinished", "CheckLogin - onResponse = 200OK");
+                        saveTokenAndId(response.body());
+                        myProfile = new ArrayList<Profile>();
+                        myProfile.add(new Profile(response.body().getUser()));
+                        runOperation(new LoadUserListFromNetwork());
+                    } else if (response.code() == 404) {
+                        hideProgress();
+                        showSnackbar("Неверный логин или пароль");
+                    } else {
+                        showSnackbar("Все пропало Шеф!!!");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserModelRes> call, Throwable t) {
+                }
+            });
+
+        } else {
+            Log.e("LoadChronos", "ErrLoadChronos");
+        }
+    }
+
+    public void onOperationFinished(final LoadUserListFromNetwork.Result result) {
+        Log.e("onOperationFinished", "LoadUserListFromNetwork - in");
+        if (result.isSuccessful()) {
+            Log.e("onOperationFinished", "LoadUserListFromNetwork - isSuccessful");
+            Call<UserListRes> call = result.getOutput();
+            call.enqueue(new Callback<UserListRes>() {
+                @Override
+                public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
+                    try {
+                        if (response.code() == 200) {
+                            Log.e("onOperationFinished", "LoadUserListFromNetwork - onResponse = 200OK");
+                            List<Repository> allRepositories = new ArrayList<Repository>();
+                            List<User> allUsers = new ArrayList<User>();
+
+
+                            for (UserListRes.UserData userRes : response.body().getData()) {
+                                allRepositories.addAll(getRepoListFromUserRes(userRes));
+                                allUsers.add(new User(userRes));
+                            }
+
+                            Log.e("onOperationFinished", "LoadUserListFromNetwork - insert BD");
+                            runOperation(new SaveUsersInDb(allRepositories, allUsers, myProfile));
+
+                        } else {
+                            hideProgress();
+                            showSnackbar("Список пользователей не может быть получен");
+                            Log.e(TAG, "onResponse: " + String.valueOf(response.errorBody().source()));
+                        }
+
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        showSnackbar("Что-то пошло не так");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserListRes> call, Throwable t) {
+                    // TODO: 14.07.2016 Обработать ошибки
+                }
+            });
+
+        } else {
+            Log.e("LoadChronos", "ErrLoadChronos");
+        }
+    }
+
+    public void onOperationFinished(final SaveUsersInDb.Result result) {
+        Log.e("onOperationFinished", "SaveUsersInDb - in");
+        if (result.isSuccessful()) {
+            Log.e("onOperationFinished", "SaveUsersInDb - isSuccessful");
+            Log.e("onOperationFinished", "SaveUsersInDb - Intent UserListActivity");
+            Intent loginIntent = new Intent(LoginActivity.this, UserListActivity.class);
+            startActivity(loginIntent);
+
+            hideProgress();
+        }
+    }
+
 }

@@ -18,6 +18,8 @@ public class UserModelRes {
         return data;
     }
 
+    public User getUser() { return data.user; }
+
     public class User {
         @SerializedName("_id")
         @Expose
@@ -80,6 +82,8 @@ public class UserModelRes {
         public String getSecondName() {
             return secondName;
         }
+
+        public String getFullName() { return secondName + " " + firstName; }
     }
 
     public class Repositories {
@@ -112,6 +116,10 @@ public class UserModelRes {
 
         public String getTitle() {
             return title;
+        }
+
+        public String getId() {
+            return id;
         }
     }
 
